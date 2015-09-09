@@ -1,5 +1,5 @@
 spring:
-  application.name: amigosecreto
+  application.name: secretfriend
 
   datasource:
     driverClassName: org.h2.Driver

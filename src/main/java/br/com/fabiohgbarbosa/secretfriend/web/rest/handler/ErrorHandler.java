@@ -1,6 +1,6 @@
-package br.com.fabiohgbarbosa.amigosecreto.web.rest.handler;
+package br.com.fabiohgbarbosa.secretfriend.web.rest.handler;
 
-import br.com.fabiohgbarbosa.amigosecreto.exception.AmigoSecretoException;
+import br.com.fabiohgbarbosa.secretfriend.exception.AmigoSecretoException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
+ * App Handler Exception
  * Created by fabio on 08/09/15.
  */
 @ControllerAdvice
@@ -24,7 +25,7 @@ public class ErrorHandler {
     @ExceptionHandler(AmigoSecretoException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> handle(AmigoSecretoException e) {
-        ErrorDTO errorDTO = new ErrorDTO(e.getMessage());
+        final ErrorDTO errorDTO = new ErrorDTO(e.getMessage());
         return new ResponseEntity<ErrorDTO>(errorDTO, e.getHttpStatus());
     }
 
@@ -38,8 +39,8 @@ public class ErrorHandler {
     @ResponseBody
     public ResponseEntity<ErrorDTO> handle(MethodArgumentNotValidException e) {
 
-        BindingResult result = e.getBindingResult();
-        StringBuilder buffer = new StringBuilder();
+        final BindingResult result = e.getBindingResult();
+        final StringBuilder buffer = new StringBuilder();
 
         // get field errors
         for (FieldError fieldError : result.getFieldErrors()) {
@@ -48,7 +49,7 @@ public class ErrorHandler {
         }
         buffer.deleteCharAt(buffer.length()-2); //remove last comma
 
-        ErrorDTO errorDTO = new ErrorDTO(buffer.toString());
+        final ErrorDTO errorDTO = new ErrorDTO(buffer.toString());
         return new ResponseEntity<ErrorDTO>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 

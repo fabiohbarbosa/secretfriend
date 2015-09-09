@@ -1,4 +1,4 @@
-package br.com.fabiohgbarbosa.amigosecreto.pessoa.domain.entity;
+package br.com.fabiohgbarbosa.secretfriend.people.domain.entity;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Created by fabio on 08/09/15.
  */
 @Entity
-public class Pessoa implements Serializable {
+public class People implements Serializable {
 
     @Id
     @GeneratedValue
@@ -24,11 +24,16 @@ public class Pessoa implements Serializable {
     @Column(unique = true)
     private String email;
 
-    public Pessoa() {
+    public People() {
     }
 
-    public Pessoa(final Long id, final String nome, final String email) {
+    public People(final Long id, final String nome, final String email) {
         this.id = id;
+        this.nome = nome;
+        this.email = email;
+    }
+
+    public People(final String nome, final String email) {
         this.nome = nome;
         this.email = email;
     }

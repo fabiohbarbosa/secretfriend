@@ -1,4 +1,4 @@
-package br.com.fabiohgbarbosa.amigosecreto.web.rest.handler;
+package br.com.fabiohgbarbosa.secretfriend.web.rest.handler;
 
 /**
  * Envelope Error
