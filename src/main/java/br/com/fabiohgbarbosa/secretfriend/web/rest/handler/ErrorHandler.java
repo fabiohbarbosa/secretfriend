@@ -1,6 +1,6 @@
 package br.com.fabiohgbarbosa.secretfriend.web.rest.handler;
 
-import br.com.fabiohgbarbosa.secretfriend.exception.AmigoSecretoException;
+import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,9 +22,9 @@ public class ErrorHandler {
      * @param e Exception
      * @return Custom JSON Envelope Error
      */
-    @ExceptionHandler(AmigoSecretoException.class)
+    @ExceptionHandler(SecretFriendException.class)
     @ResponseBody
-    public ResponseEntity<ErrorDTO> handle(AmigoSecretoException e) {
+    public ResponseEntity<ErrorDTO> handle(SecretFriendException e) {
         final ErrorDTO errorDTO = new ErrorDTO(e.getMessage());
         return new ResponseEntity<ErrorDTO>(errorDTO, e.getHttpStatus());
     }

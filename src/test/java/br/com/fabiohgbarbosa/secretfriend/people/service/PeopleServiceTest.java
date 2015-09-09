@@ -1,6 +1,6 @@
 package br.com.fabiohgbarbosa.secretfriend.people.service;
 
-import br.com.fabiohgbarbosa.secretfriend.exception.AmigoSecretoServiceException;
+import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.fixture.PeopleFixture;
@@ -43,7 +43,7 @@ public class PeopleServiceTest {
         verify(service, times(1)).saveOrUpdate(people);
     }
 
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void saveTestErrorContainingId() {
         final People people = PeopleFixture.newPeople();
 
@@ -61,7 +61,7 @@ public class PeopleServiceTest {
         verify(service, times(1)).saveOrUpdate(people);
     }
 
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void updateTestErrorNotContainingId() {
         final People people = PeopleFixture.newPeople();
         people.setId(null);
@@ -72,7 +72,7 @@ public class PeopleServiceTest {
     }
 
     //~-- saveOrUpdate
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInSave() {
         final People people = PeopleFixture.newPeople();
 
@@ -81,13 +81,13 @@ public class PeopleServiceTest {
 
         try {
             service.saveOrUpdate(people);
-        } catch (AmigoSecretoServiceException e) {
+        } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;
         }
     }
 
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus400WhenCatchConstraintViolationExceptionInSave() {
         final People people = PeopleFixture.newPeople();
 
@@ -96,7 +96,7 @@ public class PeopleServiceTest {
 
         try {
             service.saveOrUpdate(people);
-        } catch (AmigoSecretoServiceException e) {
+        } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.BAD_REQUEST, e.getHttpStatus());
             throw e;
         }
@@ -109,14 +109,14 @@ public class PeopleServiceTest {
         verify(repository, times(1)).findAll();
     }
 
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInFindAll() {
         final Exception exception = Mockito.mock(IllegalArgumentException.class);
         doThrow(exception).when(repository).findAll();
 
         try {
             service.findAll();
-        } catch (AmigoSecretoServiceException e) {
+        } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;
         }
@@ -131,7 +131,7 @@ public class PeopleServiceTest {
         verify(repository, times(1)).delete(id);
     }
 
-    @Test(expected = AmigoSecretoServiceException.class)
+    @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInDelete() {
         final Long id = 7L;
         final Exception exception = Mockito.mock(IllegalArgumentException.class);
@@ -139,7 +139,7 @@ public class PeopleServiceTest {
 
         try {
             service.delete(id);
-        } catch (AmigoSecretoServiceException e) {
+        } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;
         }

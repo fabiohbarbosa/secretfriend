@@ -6,11 +6,11 @@ import org.springframework.http.HttpStatus;
  * App superclass exception
  * Created by fabio on 08/09/15.
  */
-public abstract class AmigoSecretoException extends RuntimeException {
+public abstract class SecretFriendException extends RuntimeException {
 
     private HttpStatus httpStatus;
 
-    public AmigoSecretoException(final String message, final HttpStatus httpStatus) {
+    public SecretFriendException(final String message, final HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
     }

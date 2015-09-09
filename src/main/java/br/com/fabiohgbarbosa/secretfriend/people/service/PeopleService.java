@@ -1,6 +1,6 @@
 package br.com.fabiohgbarbosa.secretfriend.people.service;
 
-import br.com.fabiohgbarbosa.secretfriend.exception.AmigoSecretoServiceException;
+import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class PeopleService {
     @Transactional
     public People save(final People people) {
         if (people.getId() != null) {
-            throw new AmigoSecretoServiceException("ID não pode preechido", HttpStatus.BAD_REQUEST);
+            throw new SecretFriendServiceException("ID não pode preechido", HttpStatus.BAD_REQUEST);
         }
         return saveOrUpdate(people);
     }
@@ -31,7 +31,7 @@ public class PeopleService {
     @Transactional
     public void update(final People people) {
         if (people.getId() == null) {
-            throw new AmigoSecretoServiceException("ID não pode ser nulo", HttpStatus.BAD_REQUEST);
+            throw new SecretFriendServiceException("ID não pode ser nulo", HttpStatus.BAD_REQUEST);
         }
         saveOrUpdate(people);
     }
@@ -41,9 +41,9 @@ public class PeopleService {
         try {
             return repository.save(people);
         } catch (ConstraintViolationException e) {
-            throw new AmigoSecretoServiceException(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            throw new AmigoSecretoServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -51,7 +51,7 @@ public class PeopleService {
         try {
             return repository.findAll();
         } catch (Exception e) {
-            throw new AmigoSecretoServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -59,7 +59,7 @@ public class PeopleService {
         try {
             repository.delete(id);
         } catch (Exception e) {
-            throw new AmigoSecretoServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
