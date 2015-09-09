@@ -3,7 +3,7 @@ package br.com.fabiohgbarbosa.secretfriend.people.service;
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
-import br.com.fabiohgbarbosa.secretfriend.web.rest.fixture.PeopleFixture;
+import br.com.fabiohgbarbosa.secretfriend.people.domain.PeopleFixture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

@@ -4,8 +4,10 @@ import org.junit.Before;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,39 +18,45 @@ import java.util.List;
  */
 public abstract class RestClientAPI {
 
-    private String serverUrl;
-
-    public RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Before
-    public void setUp() throws Exception {
-        serverUrl = new URL("http://localhost:" + getPort() + getEndPoint()).toString();
+    public void setUp() {
         restTemplate = new TestRestTemplate();
     }
 
+    public String getServerUrl() {
+        try {
+            return new URL("http://localhost:" + getPort() + getEndPoint()).toString();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public <T> ResponseEntity<T> post(final Object request, final Class<T> clazz) {
-        return restTemplate.postForEntity(serverUrl, request, clazz);
+        return restTemplate.postForEntity(getServerUrl(), request, clazz);
     }
 
     public void put(final Object request) {
-        restTemplate.put(serverUrl, request);
+        restTemplate.put(getServerUrl(), request);
     }
 
     public <T> ResponseEntity<T> put(final Object request, final Class<T> clazz) {
-        return restTemplate.exchange(serverUrl, HttpMethod.PUT, requestEntity(), clazz, request);
+        return restTemplate.exchange(getServerUrl(), HttpMethod.PUT, requestEntity(), clazz, request);
     }
 
     public <T> ResponseEntity<List<T>> findAll() {
         final ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {};
-        return restTemplate.exchange(serverUrl, HttpMethod.GET, requestEntity(), responseType);
+        return restTemplate.exchange(getServerUrl(), HttpMethod.GET, requestEntity(), responseType);
     }
 
     public void delete(final Object request) {
-        restTemplate.delete(serverUrl, request);
+        restTemplate.delete(getServerUrl(), request);
     }
 
     public <T> ResponseEntity<T> delete(final Object request, final Class<T> clazz) {
-        return restTemplate.exchange(serverUrl, HttpMethod.DELETE, requestEntity(), clazz, request);
+        return restTemplate.exchange(getServerUrl(), HttpMethod.DELETE, requestEntity(), clazz, request);
     }
 
     private HttpEntity<?> requestEntity() {
@@ -56,9 +64,8 @@ public abstract class RestClientAPI {
         final List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
         acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
         requestHeaders.setAccept(acceptableMediaTypes);
-        return new HttpEntity<Object>(requestHeaders);
+        return new HttpEntity<>(requestHeaders);
     }
-
 
     protected abstract int getPort();
     protected abstract String getEndPoint();

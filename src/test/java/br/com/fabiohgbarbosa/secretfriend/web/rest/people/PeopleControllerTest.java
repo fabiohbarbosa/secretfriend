@@ -1,8 +1,9 @@
-package br.com.fabiohgbarbosa.secretfriend.web.rest;
+package br.com.fabiohgbarbosa.secretfriend.web.rest.people;
 
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.web.config.WebApplication;
-import br.com.fabiohgbarbosa.secretfriend.web.rest.fixture.PeopleFixture;
+import br.com.fabiohgbarbosa.secretfriend.people.domain.PeopleFixture;
+import br.com.fabiohgbarbosa.secretfriend.web.rest.RestClientAPI;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.handler.ErrorDTO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +46,7 @@ public class PeopleControllerTest extends RestClientAPI {
 
     //~-- save
     @Test
-    public void saveTest() {
+    public void testSave() {
         final People people = PeopleFixture.newPeople();
         people.setId(null);
 
@@ -58,7 +59,7 @@ public class PeopleControllerTest extends RestClientAPI {
     }
 
     @Test
-    public void saveErrorDTOTest() {
+    public void testSaveErrorDTO() {
         final People people = PeopleFixture.newPeople();
         people.setId(1L);
 
@@ -72,13 +73,13 @@ public class PeopleControllerTest extends RestClientAPI {
 
     //~-- update
     @Test
-    public void updateTest() {
+    public void testUpdate() {
         final People people = PeopleFixture.newPeople();
         put(people);
     }
 
     @Test
-    public void updateErrorDTOTest() {
+    public void testUpdateErrorDTO() {
         final People people = PeopleFixture.newPeople();
         people.setId(null);
 
@@ -92,7 +93,7 @@ public class PeopleControllerTest extends RestClientAPI {
 
     //~-- findAll
     @Test
-    public void findAllTest() {
+    public void testfindAll() {
         post(PeopleFixture.newPeople("email1@test.com"), Long.class);
         post(PeopleFixture.newPeople("email2@test.com"), Long.class);
 
@@ -102,8 +103,8 @@ public class PeopleControllerTest extends RestClientAPI {
 
     //~-- delete
     @Test
-    public void deleteTest() {
-        final People people = PeopleFixture.newPeople();
-        delete(people.getId());
+    public void testDelete() {
+        Long id = post(PeopleFixture.newPeople("email3@test.com"), Long.class).getBody();
+        delete(id);
     }
 }

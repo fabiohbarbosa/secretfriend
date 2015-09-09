@@ -1,4 +1,4 @@
-package br.com.fabiohgbarbosa.secretfriend.web.rest;
+package br.com.fabiohgbarbosa.secretfriend.web.rest.people;
 
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.people.service.PeopleService;
@@ -21,15 +21,19 @@ public class PeopleController {
 
     /**
      * POST people
+     *
      * @param people 'People' to save
      */
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Long post(final @RequestBody @Valid People people) {
+    public
+    @ResponseBody
+    Long post(final @RequestBody @Valid People people) {
         return service.save(people).getId();
     }
 
     /**
      * PUT people
+     *
      * @param people 'People' to update
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -42,7 +46,9 @@ public class PeopleController {
      * FIND ALL people
      */
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody List<People> findAll() {
+    public
+    @ResponseBody
+    List<People> findAll() {
         return service.findAll();
     }
 
@@ -50,7 +56,7 @@ public class PeopleController {
      * DELETE people
      */
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RequestMapping(value="/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }

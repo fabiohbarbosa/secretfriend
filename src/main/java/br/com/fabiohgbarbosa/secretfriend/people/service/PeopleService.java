@@ -4,6 +4,7 @@ import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException
 import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
 import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,9 @@ public class PeopleService {
     protected People saveOrUpdate(final People people) {
         try {
             return repository.save(people);
-        } catch (ConstraintViolationException e) {
+        } catch (DataIntegrityViolationException e) { // e-mail unique key
+            throw new SecretFriendServiceException("E-mail já existe", HttpStatus.BAD_REQUEST);
+        } catch (ConstraintViolationException e) { // required fields
             throw new SecretFriendServiceException(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -62,4 +65,5 @@ public class PeopleService {
             throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 }

@@ -26,7 +26,7 @@ public class ErrorHandler {
     @ResponseBody
     public ResponseEntity<ErrorDTO> handle(SecretFriendException e) {
         final ErrorDTO errorDTO = new ErrorDTO(e.getMessage());
-        return new ResponseEntity<ErrorDTO>(errorDTO, e.getHttpStatus());
+        return new ResponseEntity<>(errorDTO, e.getHttpStatus());
     }
 
 

@@ -2,7 +2,6 @@ package br.com.fabiohgbarbosa.secretfriend.web.rest.handler;
 
 /**
  * Envelope Error
- *
  * Created by fabio on 08/09/15.
  */
 public class ErrorDTO {

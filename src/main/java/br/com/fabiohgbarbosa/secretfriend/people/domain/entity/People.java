@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
+ * People table
  * Created by fabio on 08/09/15.
  */
 @Entity
@@ -17,7 +18,7 @@ public class People implements Serializable {
     private Long id;
 
     @NotBlank(message = "Nome não pode ser nulo")
-    private String nome;
+    private String name;
 
     @Email(message = "E-mail inválido")
     @NotBlank(message = "E-mail não pode ser nulo")
@@ -27,14 +28,14 @@ public class People implements Serializable {
     public People() {
     }
 
-    public People(final Long id, final String nome, final String email) {
+    public People(final Long id, final String name, final String email) {
         this.id = id;
-        this.nome = nome;
+        this.name = name;
         this.email = email;
     }
 
-    public People(final String nome, final String email) {
-        this.nome = nome;
+    public People(final String name, final String email) {
+        this.name = name;
         this.email = email;
     }
 
@@ -46,12 +47,12 @@ public class People implements Serializable {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(final String nome) {
-        this.nome = nome;
+    public void setName(final String name) {
+        this.name = name;
     }
 
     public String getEmail() {
