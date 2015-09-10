@@ -1,9 +1,9 @@
-package br.com.fabiohgbarbosa.secretfriend.people.service;
+package br.com.fabiohgbarbosa.secretfriend.person.service;
 
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
-import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.PeopleFixture;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
+import br.com.fabiohgbarbosa.secretfriend.person.repository.PersonRepository;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.PersonFixture;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,64 +23,64 @@ import static org.mockito.Mockito.*;
  * Created by fabio on 08/09/15.
  */
 @RunWith(MockitoJUnitRunner.class)
-public class PeopleServiceTest {
+public class PersonServiceTest {
 
     @Mock
-    private PeopleRepository repository;
+    private PersonRepository repository;
 
     @InjectMocks
     @Spy
-    private PeopleService service;
+    private PersonService service;
 
     //~-- save
     @Test
     public void saveTest() {
-        final People people = PeopleFixture.newPeople();
-        people.setId(null);
+        final Person person = PersonFixture.newPerson();
+        person.setId(null);
 
-        service.save(people);
+        service.save(person);
 
-        verify(service, times(1)).saveOrUpdate(people);
+        verify(service, times(1)).saveOrUpdate(person);
     }
 
     @Test(expected = SecretFriendServiceException.class)
     public void saveTestErrorContainingId() {
-        final People people = PeopleFixture.newPeople();
+        final Person person = PersonFixture.newPerson();
 
-        service.save(people);
+        service.save(person);
 
-        verify(service, times(1)).saveOrUpdate(people);
+        verify(service, times(1)).saveOrUpdate(person);
     }
 
     //~-- update
     @Test
     public void updateTest() {
-        final People people = PeopleFixture.newPeople();
-        service.update(people);
+        final Person person = PersonFixture.newPerson();
+        service.update(person);
 
-        verify(service, times(1)).saveOrUpdate(people);
+        verify(service, times(1)).saveOrUpdate(person);
     }
 
     @Test(expected = SecretFriendServiceException.class)
     public void updateTestErrorNotContainingId() {
-        final People people = PeopleFixture.newPeople();
-        people.setId(null);
+        final Person person = PersonFixture.newPerson();
+        person.setId(null);
 
-        service.update(people);
+        service.update(person);
 
-        verify(service, times(1)).saveOrUpdate(people);
+        verify(service, times(1)).saveOrUpdate(person);
     }
 
     //~-- saveOrUpdate
     @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInSave() {
-        final People people = PeopleFixture.newPeople();
+        final Person person = PersonFixture.newPerson();
 
         final Exception exception = Mockito.mock(IllegalArgumentException.class);
-        doThrow(exception).when(repository).save(people);
+        doThrow(exception).when(repository).save(person);
 
         try {
-            service.saveOrUpdate(people);
+            service.saveOrUpdate(person);
         } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;
@@ -89,13 +89,13 @@ public class PeopleServiceTest {
 
     @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus400WhenCatchConstraintViolationExceptionInSave() {
-        final People people = PeopleFixture.newPeople();
+        final Person person = PersonFixture.newPerson();
 
         final ConstraintViolationException exception = Mockito.mock(ConstraintViolationException.class);
-        doThrow(exception).when(repository).save(people);
+        doThrow(exception).when(repository).save(person);
 
         try {
-            service.saveOrUpdate(people);
+            service.saveOrUpdate(person);
         } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.BAD_REQUEST, e.getHttpStatus());
             throw e;
@@ -116,6 +116,28 @@ public class PeopleServiceTest {
 
         try {
             service.findAll();
+        } catch (SecretFriendServiceException e) {
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
+            throw e;
+        }
+    }
+
+    //~-- findAll
+    @Test
+    public void findByNameOrEmail() {
+        String search = "Person";
+        service.findByNameOrEmail(search);
+        verify(repository, times(1)).findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+    }
+
+    @Test(expected = SecretFriendServiceException.class)
+    public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInFindByNameOrEmail() {
+        final Exception exception = Mockito.mock(IllegalArgumentException.class);
+        String search = "Person";
+        doThrow(exception).when(repository).findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+
+        try {
+            service.findByNameOrEmail(search);
         } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @ControllerAdvice
 public class ErrorHandler {
-
     /**
      * Handle exception in Service Layer
      * @param e Exception
@@ -29,7 +28,6 @@ public class ErrorHandler {
         return new ResponseEntity<>(errorDTO, e.getHttpStatus());
     }
 
-
     /**
      * Handle exception of Hibernate Validator in RestControllers
      * @param e Exception
@@ -38,7 +36,6 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
     public ResponseEntity<ErrorDTO> handle(MethodArgumentNotValidException e) {
-
         final BindingResult result = e.getBindingResult();
         final StringBuilder buffer = new StringBuilder();
 

@@ -28,6 +28,10 @@ public class SortitionController {
         return SortitionDTOAdapter.from(service.execute());
     }
 
+    /**
+     * Send e-mail to users
+     * @param sortitionDTOs Sortition with person and friend selected
+     */
     @RequestMapping(value = "/send_email", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void sendEmail(@Valid @RequestBody final List<SortitionDTO> sortitionDTOs) {

@@ -1,8 +1,8 @@
 package br.com.fabiohgbarbosa.secretfriend.sortition;
 
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
-import br.com.fabiohgbarbosa.secretfriend.people.service.PeopleService;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
+import br.com.fabiohgbarbosa.secretfriend.person.service.PersonService;
 import br.com.fabiohgbarbosa.secretfriend.smtpserver.SmtpServer;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.sortition.SortitionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,30 +19,30 @@ import java.util.*;
 public class SortitionService {
 
     @Autowired
-    private PeopleService peopleService;
+    private PersonService personService;
 
     @Autowired
     private SmtpServer smtpServer;
 
     /**
-     * Sortition people and friends
+     * Sortition person and friends
      * @return Sortition result
      */
-    public Map<People, People> execute() {
+    public Map<Person, Person> execute() {
         try {
-            final List<People> allPeoples = peopleService.findAll();
+            final List<Person> allPersons = personService.findAll();
 
-            if (allPeoples.size() < 2) {
+            if (allPersons.size() < 2) {
                 throw new SecretFriendServiceException("Impossível sortear com apenas uma pessoa", HttpStatus.BAD_REQUEST);
             }
 
-            Map<People, People> result = new HashMap<>();
-            List<People> sortitionPeople = new ArrayList<>(allPeoples);
+            Map<Person, Person> result = new HashMap<>();
+            List<Person> sortitionPerson = new ArrayList<>(allPersons);
 
-            for(People people : allPeoples) {
-                People friendSelected = findRandomPeople(people.getId(), sortitionPeople);
-                result.put(people, friendSelected);
-                sortitionPeople.remove(friendSelected);
+            for(Person person : allPersons) {
+                Person friendSelected = findRandomPeople(person.getId(), sortitionPerson);
+                result.put(person, friendSelected);
+                sortitionPerson.remove(friendSelected);
             }
 
             return result;
@@ -52,32 +52,32 @@ public class SortitionService {
     }
 
     /**
-     * Find random people different of id, and remove selected people of list
-     * @param id People ID
-     * @param peoples List of peoples
-     * @return Selected people
+     * Find random person different of id, and remove selected person of list
+     * @param id Person ID
+     * @param persons List of persons
+     * @return Selected person
      */
-    protected People findRandomPeople(final Long id, final List<People> peoples) {
-        List<People> manipulatePeoples = new ArrayList<>();
-        manipulatePeoples.addAll(peoples);
+    protected Person findRandomPeople(final Long id, final List<Person> persons) {
+        List<Person> manipulatePersons = new ArrayList<>();
+        manipulatePersons.addAll(persons);
 
         Long randomPeopleId = id;
         Integer randomValue = null;
 
         Random random = new Random();
         while(Objects.equals(randomPeopleId, id)) {
-            randomValue = random.nextInt(manipulatePeoples.size());
-            randomPeopleId = manipulatePeoples.get(randomValue).getId();
+            randomValue = random.nextInt(manipulatePersons.size());
+            randomPeopleId = manipulatePersons.get(randomValue).getId();
         }
 
-        People selectPeople = manipulatePeoples.get(randomValue);
-        manipulatePeoples.remove(selectPeople);
+        Person selectPerson = manipulatePersons.get(randomValue);
+        manipulatePersons.remove(selectPerson);
 
-        return selectPeople;
+        return selectPerson;
     }
 
     /**
-     * Send e-mail to people and friend
+     * Send e-mail to person and friend
      * @param sortitionDTOs Sortition list
      */
     public void sendEmail(List<SortitionDTO> sortitionDTOs) {
@@ -85,11 +85,11 @@ public class SortitionService {
             smtpServer.startServer();
             for (SortitionDTO sortitionDTO : sortitionDTOs) {
                 String subject = "Seu amigo secreto é...";
-                String name = sortitionDTO.getPeople().getName();
-                String friendName = sortitionDTO.getFriendselected().getName();
+                String name = sortitionDTO.getPerson().getName();
+                String friendName = sortitionDTO.getFriendSelected().getName();
                 String body = getEmailBody(name, friendName);
 
-                smtpServer.sendEmail(sortitionDTO.getFriendselected().getEmail(), subject, body);
+                smtpServer.sendEmail(sortitionDTO.getFriendSelected().getEmail(), subject, body);
             }
         } catch (Exception e) {
             throw new SecretFriendServiceException("Não foi possível enviar e-mail", HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,9 +1,9 @@
 package br.com.fabiohgbarbosa.secretfriend.sortition;
 
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.PeopleFixture;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
-import br.com.fabiohgbarbosa.secretfriend.people.service.PeopleService;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.PersonFixture;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
+import br.com.fabiohgbarbosa.secretfriend.person.service.PersonService;
 import br.com.fabiohgbarbosa.secretfriend.smtpserver.SmtpServer;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.sortition.SortitionDTO;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.sortition.SortitionDTOFixture;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class SortitionServiceTest {
     @Mock
-    private PeopleService peopleService;
+    private PersonService personService;
 
     @Mock
     private SmtpServer smtpServer;
@@ -43,11 +43,11 @@ public class SortitionServiceTest {
     //~--execute
     @Test
     public void executeTestWithOneThousandPeopleAndVerifyNotDuplicated() {
-        List<People> peoples = PeopleFixture.newPeoples(2);
+        List<Person> persons = PersonFixture.newPeople(2);
 
-        doReturn(peoples).when(peopleService).findAll();
+        doReturn(persons).when(personService).findAll();
 
-        final Map<People, People> sortition = service.execute();
+        final Map<Person, Person> sortition = service.execute();
 
         Set<Long> friendSelected = sortition.entrySet()
                 .stream()
@@ -59,28 +59,28 @@ public class SortitionServiceTest {
 
     @Test
     public void executeTestWithTwoPeoples() {
-        List<People> peoples = PeopleFixture.newPeoples(2);
+        List<Person> persons = PersonFixture.newPeople(2);
 
-        doReturn(peoples).when(peopleService).findAll();
+        doReturn(persons).when(personService).findAll();
 
         service.execute();
 
-        for (People people : peoples) {
-            verify(service, times(1)).findRandomPeople(eq(people.getId()), anyListOf(People.class));
+        for (Person person : persons) {
+            verify(service, times(1)).findRandomPeople(eq(person.getId()), anyListOf(Person.class));
         }
     }
 
     @Test(expected = SecretFriendServiceException.class)
     public void executeTestError() {
-        doThrow(new IllegalArgumentException()).when(peopleService).findAll();
+        doThrow(new IllegalArgumentException()).when(personService).findAll();
         service.execute();
     }
 
     @Test(expected = SecretFriendServiceException.class)
     public void executeTestErrorWithListLessThen2() {
-        List<People> peoples = PeopleFixture.newPeoples(1);
+        List<Person> persons = PersonFixture.newPeople(1);
 
-        doReturn(peoples).when(peopleService).findAll();
+        doReturn(persons).when(personService).findAll();
 
         service.execute();
     }
@@ -88,29 +88,29 @@ public class SortitionServiceTest {
     //~--findRandomPeople
     @Test
     public void findPeopleRandomForTwoPeoples() {
-        List<People> peoples = PeopleFixture.newPeoples(2);
-        People firstPeople = peoples.get(0);
-        People secondPeople = peoples.get(1);
+        List<Person> persons = PersonFixture.newPeople(2);
+        Person firstPerson = persons.get(0);
+        Person secondPerson = persons.get(1);
 
-        People selectedPeople = service.findRandomPeople(firstPeople.getId(), peoples);
+        Person selectedPerson = service.findRandomPeople(firstPerson.getId(), persons);
 
-        assertEquals(secondPeople, selectedPeople);
+        assertEquals(secondPerson, selectedPerson);
     }
 
     @Test
     public void findPeopleRandomForOneThousandPeoples() {
-        List<People> peoples = PeopleFixture.newPeoples(1000);
+        List<Person> persons = PersonFixture.newPeople(1000);
 
-        for (People people : peoples) {
-            People selectedPeople = service.findRandomPeople(people.getId(), peoples);
-            assertNotEquals(people, selectedPeople);
+        for (Person person : persons) {
+            Person selectedPerson = service.findRandomPeople(person.getId(), persons);
+            assertNotEquals(person, selectedPerson);
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void throwExceptionInFindPeopleRandomForNoPeoples() {
-        List<People> peoples = new ArrayList<>();
-        service.findRandomPeople(1L, peoples);
+        List<Person> persons = new ArrayList<>();
+        service.findRandomPeople(1L, persons);
     }
 
     //~--sendEmail
@@ -134,6 +134,6 @@ public class SortitionServiceTest {
 
     @After
     public void tearDown() {
-        reset(peopleService, smtpServer, service);
+        reset(personService, smtpServer, service);
     }
 }

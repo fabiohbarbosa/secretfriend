@@ -1,7 +1,7 @@
 package br.com.fabiohgbarbosa.secretfriend.web.rest.sortition;
 
-import br.com.fabiohgbarbosa.secretfriend.people.domain.PeopleFixture;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.PersonFixture;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -43,15 +43,15 @@ public class SortitionDTOAdapterTest {
         assertEquals(size, dtos.size());
     }
 
-    public Map<People, People> getPeoples(int size) {
-        Map<People, People> peoples = new HashMap<>();
+    public Map<Person, Person> getPeoples(int size) {
+        Map<Person, Person> people = new HashMap<>();
 
         for (int i = 0; i < size ; i++) {
-            People people = PeopleFixture.newPeople("people"+i+"@test.com");
-            People friendselected = PeopleFixture.newPeople("friendselected"+i+"@test.com");
-            peoples.put(people, friendselected);
+            Person person = PersonFixture.newPerson("person" + i + "@test.com");
+            Person friendselected = PersonFixture.newPerson("friendselected" + i + "@test.com");
+            people.put(person, friendselected);
         }
 
-        return peoples;
+        return people;
     }
 }

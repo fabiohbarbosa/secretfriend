@@ -1,6 +1,6 @@
 package br.com.fabiohgbarbosa.secretfriend.web.rest.sortition;
 
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -11,32 +11,32 @@ import java.io.Serializable;
  */
 public class SortitionDTO implements Serializable {
     @NotNull(message = "Pessoa não pode ser nulo")
-    private People people;
+    private Person person;
 
     @NotNull(message = "Amigo escolhido não pode ser nulo")
-    private People friendselected;
+    private Person friendSelected;
 
     public SortitionDTO() {
     }
 
-    public SortitionDTO(final People people, final People friendselected) {
-        this.people = people;
-        this.friendselected = friendselected;
+    public SortitionDTO(final Person person, final Person friendSelected) {
+        this.person = person;
+        this.friendSelected = friendSelected;
     }
 
-    public People getPeople() {
-        return people;
+    public Person getPerson() {
+        return person;
     }
 
-    public void setPeople(final People people) {
-        this.people = people;
+    public void setPerson(final Person person) {
+        this.person = person;
     }
 
-    public People getFriendselected() {
-        return friendselected;
+    public Person getFriendSelected() {
+        return friendSelected;
     }
 
-    public void setFriendselected(final People friendselected) {
-        this.friendselected = friendselected;
+    public void setFriendSelected(final Person friendSelected) {
+        this.friendSelected = friendSelected;
     }
 }

@@ -1,8 +1,8 @@
-package br.com.fabiohgbarbosa.secretfriend.people.service;
+package br.com.fabiohgbarbosa.secretfriend.person.service;
 
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
-import br.com.fabiohgbarbosa.secretfriend.people.domain.entity.People;
-import br.com.fabiohgbarbosa.secretfriend.people.repository.PeopleRepository;
+import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
+import br.com.fabiohgbarbosa.secretfriend.person.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,34 +13,34 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 /**
- * People Service
+ * Person Service
  * Created by fabio on 08/09/15.
  */
 @Service
-public class PeopleService {
+public class PersonService {
     @Autowired
-    private PeopleRepository repository;
+    private PersonRepository repository;
 
     @Transactional
-    public People save(final People people) {
-        if (people.getId() != null) {
+    public Person save(final Person person) {
+        if (person.getId() != null) {
             throw new SecretFriendServiceException("ID não pode preechido", HttpStatus.BAD_REQUEST);
         }
-        return saveOrUpdate(people);
+        return saveOrUpdate(person);
     }
 
     @Transactional
-    public void update(final People people) {
-        if (people.getId() == null) {
+    public void update(final Person person) {
+        if (person.getId() == null) {
             throw new SecretFriendServiceException("ID não pode ser nulo", HttpStatus.BAD_REQUEST);
         }
-        saveOrUpdate(people);
+        saveOrUpdate(person);
     }
 
     @Transactional
-    protected People saveOrUpdate(final People people) {
+    protected Person saveOrUpdate(final Person person) {
         try {
-            return repository.save(people);
+            return repository.save(person);
         } catch (DataIntegrityViolationException e) { // e-mail unique key
             throw new SecretFriendServiceException("E-mail já existe", HttpStatus.BAD_REQUEST);
         } catch (ConstraintViolationException e) { // required fields
@@ -50,7 +50,7 @@ public class PeopleService {
         }
     }
 
-    public List<People> findAll() {
+    public List<Person> findAll() {
         try {
             return repository.findAll();
         } catch (Exception e) {
@@ -66,4 +66,11 @@ public class PeopleService {
         }
     }
 
+    public List<Person> findByNameOrEmail(final String search) {
+        try {
+            return repository.findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+        } catch (Exception e) {
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

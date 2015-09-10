@@ -1,72 +1,126 @@
 package br.com.fabiohgbarbosa.secretfriend.web.rest;
 
 import org.junit.Before;
-import org.springframework.boot.test.TestRestTemplate;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.web.client.DefaultResponseErrorHandler;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
+
+import static br.com.fabiohgbarbosa.secretfriend.web.rest.util.JsonParse.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Abstract class for client REST APIs
  * Created by fabio on 09/09/15.
  */
-public abstract class RestClientAPI {
-
-    private RestTemplate restTemplate;
+public abstract class RestClientAPI<Controller> {
+    private MockMvc mvc;
 
     @Before
-    public void setUp() {
-        restTemplate = new TestRestTemplate();
+    public void setUp() throws Exception {
+        mvc = MockMvcBuilders.standaloneSetup(getController()).build();
     }
 
-    public String getServerUrl() {
-        try {
-            return new URL("http://localhost:" + getPort() + getEndPoint()).toString();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+    //~-- POST
+    protected <T> T postResponseObject(Object data, final Class<T> clazz) throws Exception {
+        return fromJson(resultPost(data), clazz);
     }
 
-    public <T> ResponseEntity<T> post(final Object request, final Class<T> clazz) {
-        return restTemplate.postForEntity(getServerUrl(), request, clazz);
+    protected <T> List<T> postResponseList(Object data, final Class<T> clazz) throws Exception {
+        return fromJsonToList(resultPost(data), clazz);
     }
 
-    public void put(final Object request) {
-        restTemplate.put(getServerUrl(), request);
+    private String resultPost(final Object data) throws Exception {
+        final MvcResult mvcResult = mvcResultPost(data);
+        return mvcResult.getResponse().getContentAsString();
     }
 
-    public <T> ResponseEntity<T> put(final Object request, final Class<T> clazz) {
-        return restTemplate.exchange(getServerUrl(), HttpMethod.PUT, requestEntity(), clazz, request);
+    private MvcResult mvcResultPost(final Object data) throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.post(getEndPoint())
+                .header("Content-Type", "application/json")
+                .content(toJson(data))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
-    public <T> ResponseEntity<List<T>> findAll() {
-        final ParameterizedTypeReference<List<T>> responseType = new ParameterizedTypeReference<List<T>>() {};
-        return restTemplate.exchange(getServerUrl(), HttpMethod.GET, requestEntity(), responseType);
+    //~-- PUT
+    protected void put(Object data) throws Exception {
+        mvcResultPut(data, status().isNoContent());
     }
 
-    public void delete(final Object request) {
-        restTemplate.delete(getServerUrl(), request);
+    protected <T> T putResponseObject(Object data, final Class<T> clazz) throws Exception {
+        return fromJson(resultPut(data), clazz);
     }
 
-    public <T> ResponseEntity<T> delete(final Object request, final Class<T> clazz) {
-        return restTemplate.exchange(getServerUrl(), HttpMethod.DELETE, requestEntity(), clazz, request);
+    protected <T> List<T> putResponseList(Object data, final Class<T> clazz) throws Exception {
+        return fromJsonToList(resultPut(data), clazz);
     }
 
-    private HttpEntity<?> requestEntity() {
-        final HttpHeaders requestHeaders = new HttpHeaders();
-        final List<MediaType> acceptableMediaTypes = new ArrayList<MediaType>();
-        acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
-        requestHeaders.setAccept(acceptableMediaTypes);
-        return new HttpEntity<>(requestHeaders);
+    private String resultPut(final Object data) throws Exception {
+        final MvcResult mvcResult = mvcResultPut(data, status().isOk());
+        return mvcResult.getResponse().getContentAsString();
     }
 
-    protected abstract int getPort();
+    private MvcResult mvcResultPut(final Object data, final ResultMatcher status) throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.put(getEndPoint())
+                .header("Content-Type", "application/json")
+                .content(toJson(data))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status)
+                .andReturn();
+    }
+
+    //~-- DELETE
+    protected void delete(Long id) throws Exception {
+        mvcResultDelete(id, status().isNoContent());
+    }
+
+    protected <T> T deleteResponseObject(Long id, final Class<T> clazz) throws Exception {
+        return fromJson(resultDelete(id), clazz);
+    }
+
+    protected <T> List<T> deleteResponseList(Long id, final Class<T> clazz) throws Exception {
+        return fromJsonToList(resultDelete(id), clazz);
+    }
+
+    private String resultDelete(final Long id) throws Exception {
+        final MvcResult mvcResult = mvcResultDelete(id, status().isOk());
+        return mvcResult.getResponse().getContentAsString();
+    }
+
+    private MvcResult mvcResultDelete(final Long id, final ResultMatcher status) throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.delete(getEndPoint()+"/"+id)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status)
+                .andReturn();
+    }
+
+    //~-- GET
+    protected <T> T getResponseObject(final Class<T> clazz) throws Exception {
+        return fromJson(resultGet(), clazz);
+    }
+
+    protected <T> List<T> getResponseList(final Class<T> clazz) throws Exception {
+        return fromJsonToList(resultGet(), clazz);
+    }
+
+    private String resultGet() throws Exception {
+        final MvcResult mvcResult = mvcResultGet();
+        return mvcResult.getResponse().getContentAsString();
+    }
+
+    private MvcResult mvcResultGet() throws Exception {
+        return mvc.perform(MockMvcRequestBuilders.get(getEndPoint())
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andReturn();
+    }
+
     protected abstract String getEndPoint();
+    protected abstract Controller getController();
 }
