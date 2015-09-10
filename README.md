@@ -19,3 +19,12 @@ Verify application health:
 Verify available endpoints:
 
 [http://localhost:8080/mappings](http://localhost:8080/mappings)
+
+### Deploy the Application:
+
+Generate package:
+```sh
+mvn package
+```
+
+*Available package in folder /target*
