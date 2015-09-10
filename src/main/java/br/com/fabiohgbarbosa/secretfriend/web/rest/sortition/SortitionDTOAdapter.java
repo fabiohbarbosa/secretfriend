@@ -13,8 +13,7 @@ import java.util.Map;
 public class SortitionDTOAdapter {
     public static List<SortitionDTO> from(Map<People, People> peoples) {
         ArrayList<SortitionDTO> dtos = new ArrayList<>();
-        for (Map.Entry<People, People> entry : peoples.entrySet())
-        {
+        for (Map.Entry<People, People> entry : peoples.entrySet()) {
             SortitionDTO sortitionDTO = new SortitionDTO(entry.getKey(), entry.getValue());
             dtos.add(sortitionDTO);
         }

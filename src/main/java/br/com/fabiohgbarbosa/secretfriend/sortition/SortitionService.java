@@ -30,16 +30,24 @@ public class SortitionService {
      */
     public Map<People, People> execute() {
         try {
-            final List<People> peoples = peopleService.findAll();
+            final List<People> allPeoples = peopleService.findAll();
+
+            if (allPeoples.size() < 2) {
+                throw new SecretFriendServiceException("Impossível sortear com apenas uma pessoa", HttpStatus.BAD_REQUEST);
+            }
 
             Map<People, People> result = new HashMap<>();
-            for(People people : peoples) {
-                result.put(people, findRandomPeople(people.getId(), peoples));
+            List<People> sortitionPeople = new ArrayList<>(allPeoples);
+
+            for(People people : allPeoples) {
+                People friendSelected = findRandomPeople(people.getId(), sortitionPeople);
+                result.put(people, friendSelected);
+                sortitionPeople.remove(friendSelected);
             }
 
             return result;
-        } catch (IllegalArgumentException e) {
-            throw new SecretFriendServiceException("Impossível sortear com apenas uma pessoa", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -50,10 +58,6 @@ public class SortitionService {
      * @return Selected people
      */
     protected People findRandomPeople(final Long id, final List<People> peoples) {
-        if (peoples.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
         List<People> manipulatePeoples = new ArrayList<>();
         manipulatePeoples.addAll(peoples);
 
