@@ -14,4 +14,5 @@ import java.util.List;
  */
 public interface PersonRepository extends JpaRepository<Person, Long> {
     Page<Person> findByNameIgnoreCaseOrEmailIgnoreCase(String name, String email, Pageable pageable);
+    long countByNameIgnoreCaseOrEmailIgnoreCase(String name, String email);
 }

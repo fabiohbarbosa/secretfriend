@@ -80,7 +80,7 @@ public class PersonService {
     public PersonDTO findByNameOrEmail(final String search, Integer page, Integer perPage) {
         try {
             List<Person> people = repository.findByNameIgnoreCaseOrEmailIgnoreCase(search, search, new PageRequest(page, perPage)).getContent();
-            return new PersonDTO((int)repository.count(), people);
+            return new PersonDTO((int)repository.countByNameIgnoreCaseOrEmailIgnoreCase(search, search), people);
         } catch (Exception e) {
             throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

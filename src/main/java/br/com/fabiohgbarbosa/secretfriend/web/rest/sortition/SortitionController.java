@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class SortitionController {
      */
     @RequestMapping(value = "/send_email", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void sendEmail(@Valid @RequestBody final List<SortitionDTO> sortitionDTOs) {
+    public void sendEmail(@Valid @NotNull @RequestBody final List<SortitionDTO> sortitionDTOs) {
         service.sendEmail(sortitionDTOs);
     }
 
