@@ -3,8 +3,10 @@ package br.com.fabiohgbarbosa.secretfriend.person.service;
 import br.com.fabiohgbarbosa.secretfriend.exception.SecretFriendServiceException;
 import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
 import br.com.fabiohgbarbosa.secretfriend.person.repository.PersonRepository;
+import br.com.fabiohgbarbosa.secretfriend.web.rest.person.PersonDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,6 +60,15 @@ public class PersonService {
         }
     }
 
+    public PersonDTO findAll(Integer page, Integer perPage) {
+        try {
+            List<Person> people = repository.findAll(new PageRequest(page, perPage)).getContent();
+            return new PersonDTO((int)repository.count(), people);
+        } catch (Exception e) {
+            throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public void delete(final Long id) {
         try {
             repository.delete(id);
@@ -66,9 +77,10 @@ public class PersonService {
         }
     }
 
-    public List<Person> findByNameOrEmail(final String search) {
+    public PersonDTO findByNameOrEmail(final String search, Integer page, Integer perPage) {
         try {
-            return repository.findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+            List<Person> people = repository.findByNameIgnoreCaseOrEmailIgnoreCase(search, search, new PageRequest(page, perPage)).getContent();
+            return new PersonDTO((int)repository.count(), people);
         } catch (Exception e) {
             throw new SecretFriendServiceException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -5,6 +5,7 @@ import br.com.fabiohgbarbosa.secretfriend.person.domain.PersonFixture;
 import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
 import br.com.fabiohgbarbosa.secretfriend.web.config.WebApplication;
 import br.com.fabiohgbarbosa.secretfriend.web.rest.RestClientAPI;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,8 @@ public class PersonControllerTest extends RestClientAPI<PersonController> {
 
     @Autowired
     private PersonController controller;
+
+    private String endPoint = "/person";
 
     //~-- post
     @Test
@@ -67,7 +70,15 @@ public class PersonControllerTest extends RestClientAPI<PersonController> {
     //~-- findAll
     @Test
     public void testFindAll() throws Exception {
-        assertNotNull(getResponseList(Person.class));
+        setEndPoint("/person?page=0&perPage=10");
+        assertNotNull(getResponseObject(PersonDTO.class));
+    }
+
+    //~-- findByNameOrEmail
+    @Test
+    public void testFindByNameOrEmail() throws Exception {
+        setEndPoint("/person/advanced_search?search=test&page=0&perPage=10");
+        assertNotNull(getResponseObject(PersonDTO.class));
     }
 
     //~-- delete
@@ -78,9 +89,13 @@ public class PersonControllerTest extends RestClientAPI<PersonController> {
         delete(id);
     }
 
+    private void setEndPoint(String endPoint) {
+        this.endPoint = endPoint;
+    }
+
     @Override
     protected String getEndPoint() {
-        return "/person";
+        return endPoint;
     }
 
     @Override

@@ -2,12 +2,14 @@ package br.com.fabiohgbarbosa.secretfriend.web.rest.person;
 
 import br.com.fabiohgbarbosa.secretfriend.person.domain.entity.Person;
 import br.com.fabiohgbarbosa.secretfriend.person.service.PersonService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ENDPOINT RESTful /person
@@ -43,19 +45,22 @@ public class PersonController {
     }
 
     /**
-     * FIND ALL Person
+     * FIND ALL people
+     * @param page Page, start in 0
+     * @param perPage Register per page
+     * @return People
      */
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody List<Person> findAll() {
-        return service.findAll();
+    public @ResponseBody PersonDTO findAll(@RequestParam Integer page, @RequestParam Integer perPage) {
+        return service.findAll(page, perPage);
     }
 
     /**
      * FIND by name and e-mail
      */
     @RequestMapping(value = "/advanced_search", method = RequestMethod.GET)
-    public @ResponseBody List<Person> findByNameAndEmail(@RequestParam String search) {
-        return service.findByNameOrEmail(search);
+    public @ResponseBody PersonDTO findByNameAndEmail(@RequestParam String search, @RequestParam Integer page, @RequestParam Integer perPage) {
+        return service.findByNameOrEmail(search, page, perPage);
     }
     /**
      * DELETE person

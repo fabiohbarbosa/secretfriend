@@ -11,9 +11,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 
 import javax.validation.ConstraintViolationException;
+
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -126,18 +130,29 @@ public class PersonServiceTest {
     @Test
     public void findByNameOrEmail() {
         String search = "Person";
-        service.findByNameOrEmail(search);
-        verify(repository, times(1)).findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+        int page = 1;
+        int perPage = 1;
+
+        PageRequest pageable = new PageRequest(page, perPage);
+        doReturn(new PageImpl<Person>(new ArrayList<>())).when(repository).findByNameIgnoreCaseOrEmailIgnoreCase(search, search, pageable);
+
+        service.findByNameOrEmail(search, page, perPage);
+
+        verify(repository, times(1)).findByNameIgnoreCaseOrEmailIgnoreCase(search, search, pageable);
     }
 
     @Test(expected = SecretFriendServiceException.class)
     public void changeToServiceExceptionWithHttpStatus500WhenCatchExceptionInFindByNameOrEmail() {
         final Exception exception = Mockito.mock(IllegalArgumentException.class);
+
         String search = "Person";
-        doThrow(exception).when(repository).findByNameIgnoreCaseOrEmailIgnoreCase(search, search);
+        int page = 1;
+        int perPage = 1;
+
+        doThrow(exception).when(repository).findByNameIgnoreCaseOrEmailIgnoreCase(search, search, new PageRequest(page, perPage));
 
         try {
-            service.findByNameOrEmail(search);
+            service.findByNameOrEmail(search, page, perPage);
         } catch (SecretFriendServiceException e) {
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, e.getHttpStatus());
             throw e;
